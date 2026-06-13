@@ -1,24 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚽ Football Hub</title>
+
 <style>
-html, body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: black;
+body{
+    margin:0;
+    background: radial-gradient(circle at top, #1a1a1a, #000);
+    font-family: Arial, sans-serif;
+    color:white;
+    overflow:hidden;
 }
-iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
+
+/* TOP BAR */
+.topbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    height:60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 18px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    z-index:10;
+}
+
+.logo{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.live{
+    font-size:12px;
+    color:#00ff88;
+    padding:5px 10px;
+    border:1px solid #00ff88;
+    border-radius:20px;
+}
+
+/* MATCH BAR */
+.matchbar{
+    position:fixed;
+    top:60px;
+    width:100%;
+    height:40px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:13px;
+    color:#aaa;
+    background: rgba(255,255,255,0.03);
+}
+
+/* PLAYER */
+.player{
+    position:absolute;
+    top:100px;
+    width:100%;
+    height:calc(100vh - 100px);
+}
+
+iframe{
+    width:100%;
+    height:100%;
+    border:none;
+}
+
+/* LOADING OVERLAY */
+.loading{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    gap:10px;
+    z-index:5;
+}
+
+.spinner{
+    width:40px;
+    height:40px;
+    border:4px solid #333;
+    border-top:4px solid #00ff88;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    100%{transform:rotate(360deg);}
+}
+
+/* FOOTER */
+.footer{
+    position:fixed;
+    bottom:8px;
+    right:10px;
+    font-size:11px;
+    color:#666;
 }
 </style>
 </head>
+
 <body>
-<iframe src="https://junkieembeds.pages.dev/embed/fox4k-usa" allowfullscreen></iframe>
+
+<div class="topbar">
+    <div class="logo">⚽ Football Hub</div>
+    <div class="live">🟢 LIVE</div>
+</div>
+
+<div class="matchbar">
+    Canada vs Mexico • FIFA World Cup 2026 • Streaming Live
+</div>
+
+<div class="player">
+
+    <div class="loading" id="load">
+        <div class="spinner"></div>
+        <div>Connecting stream...</div>
+    </div>
+
+    <iframe
+        src="https://junkieembeds.pages.dev/embed/fox4k-usa"
+        allowfullscreen
+        allow="autoplay; fullscreen"
+        onload="document.getElementById('load').style.display='none'">
+    </iframe>
+
+</div>
+
+<div class="footer">
+    powered by Football Hub
+</div>
+
 </body>
-</html>
 </html>
