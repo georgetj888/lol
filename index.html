@@ -1,268 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOX 4K STREAM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Stream Player</title>
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --glass: rgba(255, 255, 255, 0.05);
+            --neon: #00f2ff;
+            --accent: #ff3b30;
+            --text: #ffffff;
+        }
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+        body { background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg) 100%); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Inter, -apple-system, BlinkMacSystemFont, sans-serif;
-}
+        /* Navbar */
+        nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .live-badge { display: flex; align-items: center; gap: 8px; font-weight: 700; letter-spacing: 1px; }
+        .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 1.5s infinite; }
+        
+        /* Video Container */
+        .player-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; transition: all 0.5s ease; }
+        .video-box { position: relative; width: 80%; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden; background: #000; padding: 3px; }
+        
+        /* Neon Border */
+        .neon-border { position: absolute; inset: 0; border-radius: 20px; padding: 3px; background: linear-gradient(45deg, var(--neon), #7000ff, var(--neon)); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: xor; animation: rotate 3s linear infinite; }
+        @keyframes rotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(360deg); } }
+        
+        iframe { width: 100%; height: 100%; border-radius: 17px; border: none; }
+        
+        /* Overlay */
+        .buffering { position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 10; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid var(--neon); border-radius: 50%; animation: spin 1s linear infinite; }
 
-body{
-    background: radial-gradient(circle at top,#14161c,#07080c 70%);
-    color:white;
-    overflow-x:hidden;
-}
+        /* Controls */
+        .controls { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); backdrop-filter: blur(15px); }
+        button { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: rgba(255,255,255,0.1); transform: scale(1.05); }
 
-/* TOP BAR */
-.topbar{
-    position:fixed;
-    top:0;
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    padding:14px 22px;
-    backdrop-filter:blur(14px);
-    background:rgba(255,255,255,0.04);
-    border-bottom:1px solid rgba(255,255,255,0.08);
-    z-index:10;
-}
+        .tv-mode { width: 100% !important; padding: 0; border-radius: 0; }
+        .tv-mode iframe { border-radius: 0; }
 
-.live{
-    color:red;
-    font-weight:700;
-    animation:pulse 1.2s infinite;
-}
-
-@keyframes pulse{
-    0%,100%{opacity:1;}
-    50%{opacity:.3;}
-}
-
-/* CENTER */
-.container{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:80px 15px 40px;
-}
-
-/* PLAYER WRAP */
-.player{
-    width:95%;
-    max-width:1200px;
-    border-radius:22px;
-    overflow:hidden;
-    position:relative;
-    box-shadow:0 30px 90px rgba(0,0,0,0.7);
-    animation:pop 0.8s ease;
-}
-
-@keyframes pop{
-    from{transform:translateY(30px);opacity:0;}
-    to{transform:translateY(0);opacity:1;}
-}
-
-/* NEON BORDER ANIMATION */
-.player::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    padding:2px;
-    border-radius:22px;
-    background:linear-gradient(90deg,#00e5ff,#ff00e5,#00ff85,#00e5ff);
-    background-size:300% 300%;
-    animation:glow 6s linear infinite;
-    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    mask-composite:exclude;
-    pointer-events:none;
-}
-
-@keyframes glow{
-    0%{background-position:0% 50%;}
-    100%{background-position:100% 50%;}
-}
-
-/* VIDEO */
-.video{
-    width:100%;
-    aspect-ratio:16/9;
-    background:black;
-    position:relative;
-}
-
-/* BUFFER OVERLAY */
-.buffer{
-    position:absolute;
-    inset:0;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    background:rgba(0,0,0,0.6);
-    backdrop-filter:blur(6px);
-    font-size:14px;
-}
-
-.spinner{
-    width:40px;
-    height:40px;
-    border:3px solid rgba(255,255,255,0.2);
-    border-top:3px solid white;
-    border-radius:50%;
-    animation:spin 1s linear infinite;
-    margin-bottom:10px;
-}
-
-@keyframes spin{
-    to{transform:rotate(360deg);}
-}
-
-/* BADGES */
-.badge{
-    position:absolute;
-    top:14px;
-    left:14px;
-    background:red;
-    padding:5px 10px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:600;
-}
-
-/* CONTROLS */
-.controls{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 18px;
-    background:rgba(255,255,255,0.05);
-    backdrop-filter:blur(10px);
-}
-
-.btn{
-    padding:9px 12px;
-    border-radius:12px;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.1);
-    cursor:pointer;
-    transition:0.2s;
-    font-size:13px;
-}
-
-.btn:hover{
-    transform:scale(1.05);
-    background:rgba(255,255,255,0.15);
-}
-
-.stats{
-    font-size:12px;
-    opacity:0.7;
-}
-
-/* TV MODE */
-.tvmode .player{
-    width:100%;
-    max-width:100%;
-    border-radius:0;
-}
-
-.tvmode .player::before{
-    border-radius:0;
-}
-</style>
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
-
 <body>
 
-<div class="topbar">
-    <div>FOX STREAM <span class="live">● LIVE</span></div>
-    <div class="stats" id="bitrate">Bitrate: 4.8 Mbps • Stable</div>
-</div>
+    <nav>
+        <div class="live-badge"><span class="dot"></span> FOX STREAM ● LIVE</div>
+        <div id="bitrate">Bitrate: 8500 Kbps</div>
+    </nav>
 
-<div class="container" id="app">
-
-    <div class="player">
-
-        <div class="video">
-
-            <div class="badge">4K ULTRA HD</div>
-
-            <div class="buffer" id="buffer">
-                <div>
-                    <div class="spinner"></div>
-                    Buffering...
-                </div>
-            </div>
-
-            <iframe 
-                src="https://junkieembeds.pages.dev/embed/fox4k-usa"
-                width="100%" height="100%"
-                frameborder="0"
-                allowfullscreen>
-            </iframe>
-
+    <div class="player-wrapper" id="wrapper">
+        <div class="video-box" id="player">
+            <div class="neon-border"></div>
+            <div class="buffering" id="loader"><div class="spinner"></div></div>
+            <iframe src="https://junkieembeds.pages.dev/embed/fox4k-usa" allowfullscreen></iframe>
         </div>
-
-        <div class="controls">
-
-            <div>
-                <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-                <button class="btn" onclick="toggleTV()">📺 TV Mode</button>
-                <button class="btn" onclick="fakeBuffer()">🔄 Refresh</button>
-            </div>
-
-            <div class="stats">
-                Low Latency • Ultra Stream Engine
-            </div>
-
-        </div>
-
     </div>
 
-</div>
+    <div class="controls">
+        <div style="display: flex; gap: 10px;">
+            <button onclick="toggleFullscreen()">Fullscreen</button>
+            <button onclick="toggleTV()">TV Mode</button>
+            <button onclick="refreshStream()">Refresh</button>
+        </div>
+        <div id="status">Low Latency: Stable</div>
+    </div>
 
-<script>
+    <script>
+        function toggleFullscreen() {
+            const el = document.getElementById('player');
+            if (!document.fullscreenElement) el.requestFullscreen();
+            else document.exitFullscreen();
+        }
 
-// FULLSCREEN
-function toggleFullscreen(){
-    let el = document.documentElement;
-    if (!document.fullscreenElement){
-        el.requestFullscreen();
-    } else {
-        document.exitFullscreen();
-    }
-}
+        function toggleTV() {
+            document.getElementById('wrapper').classList.toggle('tv-mode');
+        }
 
-// TV MODE
-function toggleTV(){
-    document.getElementById("app").classList.toggle("tvmode");
-}
+        function refreshStream() {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            setTimeout(() => { loader.style.display = 'none'; }, 2000);
+        }
 
-// BUFFER SIMULATION
-function fakeBuffer(){
-    let b = document.getElementById("buffer");
-    b.style.display = "flex";
-    setTimeout(()=> {
-        b.style.display = "none";
-    }, 2000);
-}
-
-// FAKE BITRATE CHANGER
-setInterval(()=>{
-    let speed = (4 + Math.random()*3).toFixed(1);
-    document.getElementById("bitrate").innerText =
-    `Bitrate: ${speed} Mbps • Stable`;
-}, 3000);
-
-</script>
-
+        setInterval(() => {
+            const bitrate = Math.floor(Math.random() * (9500 - 7000 + 1) + 7000);
+            document.getElementById('bitrate').innerText = `Bitrate: ${bitrate} Kbps`;
+        }, 3000);
+    </script>
 </body>
 </html>
+
+```
