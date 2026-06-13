@@ -3,129 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FOX 4K Live</title>
+<title>FOX 4K STREAM</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
-    background: #0b0c10;
-    color: white;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Inter, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* Top Bar */
-.header {
-    padding: 18px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    background: rgba(255,255,255,0.05);
-    backdrop-filter: blur(10px);
+body{
+    background: radial-gradient(circle at top,#14161c,#07080c 70%);
+    color:white;
+    overflow-x:hidden;
 }
 
-/* Main Container */
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 30px 15px;
+/* TOP BAR */
+.topbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    padding:14px 22px;
+    backdrop-filter:blur(14px);
+    background:rgba(255,255,255,0.04);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    z-index:10;
 }
 
-/* Video Box */
-.player {
-    width: 95%;
-    max-width: 900px;
-    aspect-ratio: 16/9;
-    background: #111;
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    position: relative;
+.live{
+    color:red;
+    font-weight:700;
+    animation:pulse 1.2s infinite;
 }
 
-/* Fake overlay UI style */
-.glow {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at top, rgba(255,255,255,0.08), transparent);
-    pointer-events: none;
+@keyframes pulse{
+    0%,100%{opacity:1;}
+    50%{opacity:.3;}
 }
 
-/* LIVE badge */
-.live {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: red;
-    padding: 5px 10px;
-    font-size: 12px;
-    border-radius: 12px;
-    font-weight: bold;
+/* CENTER */
+.container{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:80px 15px 40px;
 }
 
-/* Bottom Controls */
-.controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 12px;
+/* PLAYER WRAP */
+.player{
+    width:95%;
+    max-width:1200px;
+    border-radius:22px;
+    overflow:hidden;
+    position:relative;
+    box-shadow:0 30px 90px rgba(0,0,0,0.7);
+    animation:pop 0.8s ease;
 }
 
-.btn {
-    padding: 10px 18px;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
+@keyframes pop{
+    from{transform:translateY(30px);opacity:0;}
+    to{transform:translateY(0);opacity:1;}
 }
 
-.btn:hover {
-    background: rgba(255,255,255,0.15);
-    transform: scale(1.05);
+/* NEON BORDER ANIMATION */
+.player::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    padding:2px;
+    border-radius:22px;
+    background:linear-gradient(90deg,#00e5ff,#ff00e5,#00ff85,#00e5ff);
+    background-size:300% 300%;
+    animation:glow 6s linear infinite;
+    mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;
+    pointer-events:none;
 }
 
-/* Footer */
-.footer {
-    margin-top: 30px;
-    font-size: 12px;
-    opacity: 0.5;
+@keyframes glow{
+    0%{background-position:0% 50%;}
+    100%{background-position:100% 50%;}
+}
+
+/* VIDEO */
+.video{
+    width:100%;
+    aspect-ratio:16/9;
+    background:black;
+    position:relative;
+}
+
+/* BUFFER OVERLAY */
+.buffer{
+    position:absolute;
+    inset:0;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(6px);
+    font-size:14px;
+}
+
+.spinner{
+    width:40px;
+    height:40px;
+    border:3px solid rgba(255,255,255,0.2);
+    border-top:3px solid white;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-bottom:10px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg);}
+}
+
+/* BADGES */
+.badge{
+    position:absolute;
+    top:14px;
+    left:14px;
+    background:red;
+    padding:5px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:600;
+}
+
+/* CONTROLS */
+.controls{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 18px;
+    background:rgba(255,255,255,0.05);
+    backdrop-filter:blur(10px);
+}
+
+.btn{
+    padding:9px 12px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.1);
+    cursor:pointer;
+    transition:0.2s;
+    font-size:13px;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+    background:rgba(255,255,255,0.15);
+}
+
+.stats{
+    font-size:12px;
+    opacity:0.7;
+}
+
+/* TV MODE */
+.tvmode .player{
+    width:100%;
+    max-width:100%;
+    border-radius:0;
+}
+
+.tvmode .player::before{
+    border-radius:0;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">FOX 4K LIVE STREAM</div>
+<div class="topbar">
+    <div>FOX STREAM <span class="live">● LIVE</span></div>
+    <div class="stats" id="bitrate">Bitrate: 4.8 Mbps • Stable</div>
+</div>
 
-<div class="container">
+<div class="container" id="app">
 
     <div class="player">
-        <div class="live">● LIVE</div>
-        <div class="glow"></div>
 
-        <!-- YOUR STREAM HERE -->
-        <iframe 
-            src="https://junkieembeds.pages.dev/embed/fox4k-usa"
-            width="100%" height="100%" 
-            frameborder="0"
-            allowfullscreen>
-        </iframe>
-    </div>
+        <div class="video">
 
-    <div class="controls">
-        <button class="btn">⛶ Fullscreen</button>
-        <button class="btn">🔊 Volume</button>
-        <button class="btn">🔄 Refresh</button>
-    </div>
+            <div class="badge">4K ULTRA HD</div>
 
-    <div class="footer">
-        Stable connection • 4K Quality • iOS-style UI
+            <div class="buffer" id="buffer">
+                <div>
+                    <div class="spinner"></div>
+                    Buffering...
+                </div>
+            </div>
+
+            <iframe 
+                src="https://junkieembeds.pages.dev/embed/fox4k-usa"
+                width="100%" height="100%"
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+
+        </div>
+
+        <div class="controls">
+
+            <div>
+                <button class="btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+                <button class="btn" onclick="toggleTV()">📺 TV Mode</button>
+                <button class="btn" onclick="fakeBuffer()">🔄 Refresh</button>
+            </div>
+
+            <div class="stats">
+                Low Latency • Ultra Stream Engine
+            </div>
+
+        </div>
+
     </div>
 
 </div>
+
+<script>
+
+// FULLSCREEN
+function toggleFullscreen(){
+    let el = document.documentElement;
+    if (!document.fullscreenElement){
+        el.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// TV MODE
+function toggleTV(){
+    document.getElementById("app").classList.toggle("tvmode");
+}
+
+// BUFFER SIMULATION
+function fakeBuffer(){
+    let b = document.getElementById("buffer");
+    b.style.display = "flex";
+    setTimeout(()=> {
+        b.style.display = "none";
+    }, 2000);
+}
+
+// FAKE BITRATE CHANGER
+setInterval(()=>{
+    let speed = (4 + Math.random()*3).toFixed(1);
+    document.getElementById("bitrate").innerText =
+    `Bitrate: ${speed} Mbps • Stable`;
+}, 3000);
+
+</script>
 
 </body>
 </html>
