@@ -144,7 +144,30 @@ color:rgba(255,255,255,.6);
 background:rgba(255,255,255,.04);
 backdrop-filter:blur(15px);
 }
-</style></head><body><div class="header">
+.live{
+display:flex;
+align-items:center;
+gap:8px;
+padding:8px 14px;
+border-radius:20px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.15);
+color:white;
+font-weight:600;
+}
+
+.live-icon{
+width:10px;
+height:10px;
+border-radius:50%;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:1;}
+50%{opacity:.4;}
+100%{opacity:1;}
+}
 <div class="logo">
 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/8/86/FIFA_World_Cup_2026_logo.svg/120px-FIFA_World_Cup_2026_logo.svg.png" class="wc-logo">
 FIFA World Cup Streams
